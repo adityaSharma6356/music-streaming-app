@@ -5,6 +5,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.globalmonitor.R
+import com.example.globalmonitor.exoplayer.MusicServiceConnection
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,12 +23,16 @@ object AppModule {
         @ApplicationContext context: Context
     ) = Glide.with(context).setDefaultRequestOptions(
         RequestOptions()
-            .placeholder(R.drawable.default_music_icon)
-            .error(R.drawable.default_music_icon)
+            .placeholder(R.drawable.default_music_profile)
+            .error(R.drawable.default_music_profile)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
 
-
+    @Provides
+    @Singleton
+    fun provideMusicServiceConnection(
+        @ApplicationContext context: Context
+    ) = MusicServiceConnection(context)
 
 }
 

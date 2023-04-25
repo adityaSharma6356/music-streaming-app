@@ -74,6 +74,9 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
+    //Constraint layout in compose
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
+
     // OpenCSV
     implementation 'com.opencsv:opencsv:5.5.2'
 
@@ -90,7 +93,7 @@ dependencies {
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.1.2-beta'
 
     // Coil
-    implementation "io.coil-kt:coil-compose:1.4.0"
+    implementation "io.coil-kt:coil-compose:2.0.0-rc01"
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
@@ -116,7 +119,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.6-alpha"
 
     //Glide for image loading
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 
     //Timber for login
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -131,7 +134,10 @@ dependencies {
     runtimeOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1-native-mt'
 
     // Exoplayer for music playback
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
-    api "com.google.android.exoplayer:exoplayer-ui:2.13.3"
-    api "com.google.android.exoplayer:extension-mediasession:2.13.3"
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.2'
+    api "com.google.android.exoplayer:exoplayer-ui:2.14.2"
+    api "com.google.android.exoplayer:extension-mediasession:2.14.2"
+
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+
 }

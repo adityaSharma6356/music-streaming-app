@@ -1,0 +1,48 @@
+{
+  ConstraintSets: {
+    start: {
+      song_album_art : {
+        width: 40,
+        height: 40,
+        start: ['parent', 'start', 5],
+        top: ['parent', 'top', 5]
+      },
+      song_title : {
+        start: ['song_album_art', 'end', 10],
+        top: ['song_album_art', 'top', 5]
+      },
+      surface: {
+        height: 65,
+        start: ['parent', 'start', 10],
+        end: ['parent', 'end', 10],
+      }
+    },
+    end : {
+      song_album_art : {
+        width: 300,
+        height: 300,
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top', 10]
+      },
+      song_title : {
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['song_album_art', 'bottom', 15]
+      },
+
+      surface: {
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+      }
+    }
+  },
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+    }
+  }
+}
