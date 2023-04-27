@@ -31,3 +31,13 @@ fun MediaMetadataCompat.toMediaBrowserCompatMediaItem() : MediaBrowserCompat.Med
         .build()
     return MediaBrowserCompat.MediaItem(desc, FLAG_PLAYABLE)
 }
+
+fun MediaMetadataCompat.toSongModel(): SongModel{
+    return SongModel(
+        imageUri = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)?: "",
+        mediaid = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)?: "",
+        songUri = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)?: "",
+        subtitle = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)?: "",
+        title = getString(MediaMetadataCompat.METADATA_KEY_TITLE)?: ""
+    )
+}
