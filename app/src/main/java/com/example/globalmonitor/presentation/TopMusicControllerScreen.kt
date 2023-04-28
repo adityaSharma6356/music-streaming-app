@@ -1,17 +1,25 @@
 package com.example.globalmonitor.presentation
 
 import android.content.Context
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -19,15 +27,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.test.core.app.ActivityScenario.launch
 import coil.compose.rememberAsyncImagePainter
 import com.example.globalmonitor.R
 import com.example.globalmonitor.presentation.main.MainViewModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, context: Context) {
+fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, context: Context, songViewModel: SongViewModel) {
     Box(modifier = modifier
+        .padding(5.dp)
         .fillMaxWidth()
         .height(60.dp)
         .background(MaterialTheme.colors.background)) {
@@ -39,9 +53,18 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
                 .background(Color.White),
             contentScale = ContentScale.Crop
         )
-        Row(modifier = Modifier.padding(70.dp, 0.dp, 0.dp, 0.dp).fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier
+            .padding(70.dp, 0.dp, 0.dp, 0.dp)
+            .fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+            val interactionSource = remember { MutableInteractionSource() }
             Column(
-                Modifier.fillMaxHeight().weight(1f).clickable { viewModel.expandedSongScreen = true }
+                Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) { viewModel.expandedSongScreen = true }
             ) {
                 Text(
                     text = viewModel.state.currentPlayingSong.title,
@@ -101,6 +124,11 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
                         viewModel.skipToNextSong()
                     }
             )
+        }
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .zIndex(2f)){
+            drawLine(strokeWidth = 10f, color = Color.Red, start = Offset(x = 0f, y = size.height), end = Offset(x = size.width*viewModel.finalposi, y = size.height))
         }
     }
 }

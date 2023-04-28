@@ -6,4 +6,5 @@ data class SongModel (
     val songUri: String = "",
     val subtitle: String = "",
     val title: String = "",
+    val duration: Long = 0L
 )
