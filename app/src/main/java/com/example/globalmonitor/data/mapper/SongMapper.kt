@@ -7,9 +7,11 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
+import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import com.example.globalmonitor.R
 import com.example.globalmonitor.data.entities.SongModel
+import com.example.globalmonitor.data.entities.Songs
 
 fun SongModel.toMediaMetaDataCompat() : MediaMetadataCompat{
     return  MediaMetadataCompat.Builder()
@@ -45,5 +47,17 @@ fun MediaMetadataCompat.toSongModel(): SongModel{
         subtitle = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE)?: "",
         title = getString(MediaMetadataCompat.METADATA_KEY_TITLE)?: "",
         duration = getLong(MediaMetadataCompat.METADATA_KEY_DURATION)
+    )
+}
+
+fun Songs.toSongModel(): SongModel{
+    return SongModel(
+        imageUri,
+        mediaid,
+        songUri,
+        subtitle,
+        title,
+        duration,
+        Color.Black
     )
 }

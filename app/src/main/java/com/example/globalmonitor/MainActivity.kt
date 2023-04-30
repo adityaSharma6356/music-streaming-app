@@ -3,43 +3,55 @@ package com.example.globalmonitor
 import android.app.Activity
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.RequestManager
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.globalmonitor.presentation.MainScreen
 import com.example.globalmonitor.presentation.SongInfoScreen
-import com.example.globalmonitor.presentation.SongViewModel
 import com.example.globalmonitor.presentation.TopMusicControllerScreen
 import com.example.globalmonitor.presentation.main.MainViewModel
 import com.example.globalmonitor.ui.theme.GlobalMonitorTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -52,101 +64,161 @@ class MainActivity : ComponentActivity() {
             SideEffect {
                 val window = (this as Activity).window
                 window.statusBarColor = Color.Transparent.toArgb()
-
+                window.navigationBarColor = Color.Transparent.toArgb()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     window.isNavigationBarContrastEnforced = false
                 }
                 systemUiController.statusBarDarkContentEnabled = true
             }
             val viewModel = viewModel<MainViewModel>()
-            val songViewModel = viewModel<SongViewModel>()
             viewModel.startPlayBackLiveData(this)
             GlobalMonitorTheme {
                 val configuration = LocalConfiguration.current
-                if(viewModel.expandedSongScreen){
-                    viewModel.heigt = (-configuration.screenHeightDp-85).dp
-                } else {
-                    viewModel.heigt = 0.dp
-                }
-                val ht by animateDpAsState(targetValue = viewModel.heigt, animationSpec = TweenSpec(300))
-
                 ConstraintLayout(
                     Modifier
                         .fillMaxSize()
-                        .background(Color(0, 0, 0, 140))) {
-                    val (topMusicController, errorSnackBar, songInfoScreen, bottomBlur, tabScreen) = createRefs()
+                        .background(Color(0, 0, 0, 0))) {
+                    val (topMusicController, errorSnackBar, songInfoScreen, bottomBlur, tabScreen, songsList) = createRefs()
+                    val ht by animateDpAsState(targetValue = viewModel.heigt, animationSpec = TweenSpec(400))
+                    SongInfoScreen(mainViewModel = viewModel, modifier = Modifier
+                        .constrainAs(songInfoScreen){
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                            top.linkTo(parent.top, margin = ht)
+                    })
+                    Surface(color = Color.Transparent,modifier = Modifier
+                        .fillMaxWidth()
+                        .zIndex(8f)
+                        .constrainAs(songsList) {
+                            top.linkTo(parent.top, margin = 60.dp)
+                        }) {
+                        LazyColumn(Modifier.fillMaxSize()){
+                            itemsIndexed(viewModel.state.songsList){index , song ->
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        viewModel.playOrToggleSong(song)
+                                        lifecycleScope.launch {
+                                            viewModel.lazystate.scrollToItem(
+                                                viewModel.currentSongIndex
+                                            )
+                                        }
+                                    }
+                                    .height(80.dp)
+                                    .padding(10.dp, 5.dp)) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = song.imageUri),
+                                        contentDescription = "song image",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .padding(0.dp, 0.dp, 10.dp, 0.dp)
+                                            .size(60.dp)
+                                    )
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            text = song.title,
+                                            fontSize = 17.sp,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
+                                        )
+                                        Text(
+                                            text = song.subtitle,
+                                            fontSize = 12.sp,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = Color.Black,
+                                            modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Surface(color = Color.Transparent,
                         modifier = Modifier
                             .background(
                                 brush = Brush.verticalGradient(
                                     listOf(
-                                        Color.Transparent, Color(
-                                            0,
-                                            0,
-                                            0,
-                                            139
-                                        ), Color(0, 0, 0, 201), Color.Black
+                                        Color.Transparent,
+                                        Color(0, 0, 0, 180),
+                                        Color(0, 0, 0, 235),
+                                        Color.Black,
+                                        Color.Black
                                     )
                                 )
                             )
                             .fillMaxWidth()
-                            .height(100.dp)
+                            .height(150.dp)
                             .constrainAs(bottomBlur) {
-                                bottom.linkTo(parent.bottom, margin = 40.dp)
+                                bottom.linkTo(parent.bottom,)
                             }) {
                     }
                     TopMusicControllerScreen(
                         viewModel = viewModel,
-                        Modifier.constrainAs(topMusicController) {
-                            bottom.linkTo(bottomBlur.top, margin = (-30).dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
-                        this@MainActivity,
-                    songViewModel)
+                        Modifier
+                            .zIndex(9f)
+                            .constrainAs(topMusicController) {
+                                bottom.linkTo(bottomBlur.top, margin = (-40).dp)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            },
+                        this@MainActivity,)
                     Row(horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .background(Color.Transparent)
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                             .constrainAs(tabScreen) {
                                 top.linkTo(topMusicController.bottom)
                             }) {
+                        val interactionSource = remember { MutableInteractionSource() }
                         Column {
                             Icon(modifier = Modifier
-                                .size(40.dp)
-                                .clickable { viewModel.iconClick(1) }
+                                .height(40.dp)
+                                .width(70.dp)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) { viewModel.iconClick(1) }
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.home_icon), contentDescription = "home", tint = viewModel.colorHome, )
-                            Text(text = "Home", fontSize = 8.sp, color = viewModel.colorHome, textAlign = TextAlign.Center, modifier = Modifier.width(40.dp))
+                            Text(text = "Home", fontSize = 8.sp, color = viewModel.colorHome, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
                         Column() {
                             Icon(modifier = Modifier
-                                .size(40.dp)
-                                .clickable { viewModel.iconClick(2) }
+                                .height(40.dp)
+                                .width(70.dp)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) { viewModel.iconClick(2) }
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.search_icon), contentDescription = "search", tint = viewModel.colorSearch)
-                            Text(text = "Search", fontSize = 8.sp, color = viewModel.colorSearch, textAlign = TextAlign.Center, modifier = Modifier.width(40.dp))
+                            Text(text = "Search", fontSize = 8.sp, color = viewModel.colorSearch, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
                         Column() {
                             Icon(modifier = Modifier
-                                .size(40.dp)
-                                .clickable { viewModel.iconClick(3) }
+                                .height(40.dp)
+                                .width(70.dp)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) { viewModel.iconClick(3) }
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.playlist_icon), contentDescription = "playlist", tint = viewModel.colorPlay)
-                            Text(text = "Library", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(40.dp))
+                            Text(text = "Library", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
                         Column() {
                             Icon(modifier = Modifier
-                                .size(40.dp)
-                                .clickable { viewModel.iconClick(4) }
+                                .height(40.dp)
+                                .width(70.dp)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null
+                                ) { viewModel.iconClick(4) }
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.profile_icon), contentDescription = "profile", tint = viewModel.colorProf)
-                            Text(text = "Profile", fontSize = 8.sp, color = viewModel.colorProf, textAlign = TextAlign.Center, modifier = Modifier.width(40.dp))
+                            Text(text = "Profile", fontSize = 8.sp, color = viewModel.colorProf, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
                     }
-                    SongInfoScreen(mainViewModel = viewModel, modifier = Modifier.constrainAs(songInfoScreen){
-                        top.linkTo(parent.bottom, margin = ht)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }, songViewModel)
                     if(viewModel.someKindOfError){
                         Snackbar(shape = RoundedCornerShape(10.dp),
                             elevation = 10.dp,

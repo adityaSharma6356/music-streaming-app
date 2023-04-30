@@ -3,6 +3,8 @@ package com.example.globalmonitor.exoplayer
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_URI
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.net.toUri
 import com.example.globalmonitor.data.mapper.toMediaBrowserCompatMediaItem
 import com.example.globalmonitor.data.mapper.toMediaMetaDataCompat
@@ -18,6 +20,7 @@ import javax.inject.Inject
 class FirebaseMusicSource @Inject constructor(
     private val musicDatabase: MusicDatabase
 ) {
+
     var songs = emptyList<MediaMetadataCompat>()
 
     suspend fun fetchMediaData() = withContext(Dispatchers.Main){
