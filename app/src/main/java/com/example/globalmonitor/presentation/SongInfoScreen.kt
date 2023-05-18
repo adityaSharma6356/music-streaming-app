@@ -2,25 +2,36 @@ package com.example.globalmonitor.presentation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.Slider
+import androidx.compose.material.SliderColors
+import androidx.compose.material.SliderDefaults
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -30,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+//import androidx.compose.ui.node.CanFocusChecker.end
+//import androidx.compose.ui.node.CanFocusChecker.start
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -39,17 +52,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.request.ImageRequest
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.example.globalmonitor.R
 import com.example.globalmonitor.presentation.main.MainViewModel
-import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.NonDisposableHandle.parent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -70,7 +78,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
         .zIndex(10f)
         .background(Color.White)
         .height(configuration.screenHeightDp.dp + 90.dp)) {
-        val (fullScreenShadow, songImage, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal) = createRefs()
+        val (fullScreenShadow, replayButton, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal, seekLine) = createRefs()
         val lazycorscope = rememberCoroutineScope()
         Surface(
             modifier = Modifier
@@ -103,7 +111,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                             onHorizontalDrag = { change, dragAmount ->
                                 lazycorscope.launch {
                                     x += dragAmount
-                                    mainViewModel.lazystate.scrollBy(-dragAmount * 1.9f)
+                                    mainViewModel.lazystate.scrollBy(-dragAmount * 1f)
                                 }
                             },
                             onDragEnd = {
@@ -241,36 +249,52 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                     mainViewModel.skipToNextSong()
                 }
         )
-        Canvas(modifier = Modifier
-            .pointerInput(Unit){
-                var x =0f
-                detectHorizontalDragGestures(
-                    onDragStart = {
-                        mainViewModel.shouldUpdateSeekbar = false
-                    },
-                    onHorizontalDrag = { pointer,drag ->
-                        x+=drag
-                        mainViewModel.finalposi = x/size.width
-                        mainViewModel.setCurPlayerTimeLive((mainViewModel.state.currentPlayingSong.duration*mainViewModel.finalposi).toLong())
-                    },
-                    onDragEnd = {
-                        mainViewModel.seekTo((mainViewModel.state.currentPlayingSong.duration*mainViewModel.finalposi).toLong())
-                        mainViewModel.shouldUpdateSeekbar = true
-                    }
-                )
-            }
-            .height(20.dp)
-            .fillMaxWidth(0.8f)
-            .zIndex(10f)
-            .constrainAs(seekBar) {
-                bottom.linkTo(playPauseButton.top, margin = 60.dp)
-                start.linkTo(parent.start,)
-                end.linkTo(parent.end,)
-            }){
-            drawLine(cap = StrokeCap.Round,strokeWidth = 5f, color = Color(182, 182, 182, 255), start = Offset(x = 0f, y = size.height), end = Offset(x = size.width, y = size.height))
-            drawLine(cap = StrokeCap.Round,strokeWidth = 7f, color = Color(mainViewModel.dominantColors[1].toArgb()), start = Offset(x = 0f, y = size.height), end = Offset(x = size.width*mainViewModel.finalposi, y = size.height))
-            drawCircle(color =  Color(mainViewModel.dominantColors[1].toArgb()), radius = 10f, center = Offset(x = size.width*mainViewModel.finalposi, y = size.height))
+        var rColor by remember {
+            mutableStateOf(Color(182, 182, 182, 159))
         }
+        rColor = if(mainViewModel.isReplayEnabled) color else Color(182, 182, 182, 159)
+        Icon(
+            painter = painterResource(id = R.drawable.replay_icon),
+            contentDescription = "prev",
+            tint =  rColor,
+            modifier = Modifier
+                .constrainAs(replayButton) {
+                    top.linkTo(playPauseButton.top)
+                    bottom.linkTo(playPauseButton.bottom)
+                    start.linkTo(playPauseButton.end, margin = 110.dp)
+                }
+                .size(30.dp)
+                .zIndex(10f)
+                .clickable {
+                    mainViewModel.isReplayEnabled = !mainViewModel.isReplayEnabled
+                    rColor = if (mainViewModel.isReplayEnabled) color else Color(182, 182, 182, 159)
+                }
+        )
+        Slider(colors = SliderDefaults.colors(activeTrackColor = color, thumbColor = color, inactiveTrackColor = Color(
+            182,
+            182,
+            182,
+            159
+        ), ),
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .height(20.dp)
+                .zIndex(11f)
+                .constrainAs(seekBar) {
+                    bottom.linkTo(playPauseButton.top, margin = 50.dp)
+                    start.linkTo(parent.start,)
+                    end.linkTo(parent.end,)
+                },
+            value = mainViewModel.finalposi, onValueChange = {
+                mainViewModel.shouldUpdateSeekbar = false
+                mainViewModel.finalposi = it
+                mainViewModel.setCurPlayerTimeLive((mainViewModel.state.currentPlayingSong.duration * mainViewModel.finalposi).toLong())
+        },
+        onValueChangeFinished = {
+            mainViewModel.seekTo((mainViewModel.state.currentPlayingSong.duration * mainViewModel.finalposi).toLong())
+            mainViewModel.shouldUpdateSeekbar = true
+
+        })
         Text(
             text = mainViewModel.state.currentPlayingSong.title,
             fontSize = 24.sp,
@@ -292,7 +316,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
             modifier = Modifier
                 .zIndex(10f)
                 .constrainAs(songArtist) {
-                    bottom.linkTo(seekBar.top, margin = 10.dp)
+                    bottom.linkTo(seekBar.top, margin = 20.dp)
                     start.linkTo(parent.start, margin = 50.dp)
                 })
         Text(

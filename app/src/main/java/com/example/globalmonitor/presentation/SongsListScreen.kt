@@ -5,6 +5,6 @@ import com.bumptech.glide.RequestManager
 
 
 @Composable
-fun SongsListScreen (glide : RequestManager) {
+fun SongsListScreen () {
 
 }

@@ -63,7 +63,10 @@ class MainViewModel @Inject constructor(
     var colorPlay by mutableStateOf(lightColor)
     var colorProf by mutableStateOf(lightColor)
     var lazystate by mutableStateOf(LazyListState())
+    var lazyMenuState by mutableStateOf(LazyListState())
     var isSongEnding = false
+    var isReplayEnabled = false
+    var replayColor = Color.Gray
 
     private var scope : Job? = null
     private var scope2 : Job? = null
@@ -79,7 +82,7 @@ class MainViewModel @Inject constructor(
                 val bitmap = BitmapFactory.decodeStream(uri.openConnection().getInputStream())
                 val pallete = Palette.from(bitmap).generate()
                 dominantColors = listOf(
-                    pallete.getDarkVibrantColor(Color.Black.toArgb()).toColor(),
+                    pallete.getDarkMutedColor(Color.Black.toArgb()).toColor(),
                     pallete.getLightVibrantColor(Color.White.toArgb()).toColor(),
                 )
         }
@@ -112,10 +115,6 @@ class MainViewModel @Inject constructor(
                 colorHome = lightColor
             }
         }
-    }
-
-    fun closeScope(){
-        scope?.cancel()
     }
     init {
         getSongsList()
@@ -152,6 +151,11 @@ class MainViewModel @Inject constructor(
             0.dp
         }
     }
+//    fun scrollToItem( indexed: Int){
+//        viewModelScope.launch {
+//            lazyMenuState.animateScrollToItem(indexed)
+//        }
+//    }
     fun startPlayBackLiveData(th: LifecycleOwner){
         curPlayerPosition.observe(th){
             it?.let {

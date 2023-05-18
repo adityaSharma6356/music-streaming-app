@@ -1,6 +1,7 @@
 package com.example.globalmonitor.exoplayer.callbacks
 
 import android.app.Notification
+import android.app.Service
 import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.example.globalmonitor.exoplayer.MusicService
@@ -13,7 +14,7 @@ class MusicPlayerNotificationListner(
     override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
         super.onNotificationCancelled(notificationId, dismissedByUser)
         musicService.apply {
-            stopForeground(true)
+            stopForeground(Service.STOP_FOREGROUND_DETACH)
             isForegroundService = false
             stopSelf()
         }

@@ -13,7 +13,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.SideEffect
@@ -44,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.globalmonitor.presentation.HomeScreen
 import com.example.globalmonitor.presentation.MainScreen
 import com.example.globalmonitor.presentation.SongInfoScreen
 import com.example.globalmonitor.presentation.TopMusicControllerScreen
@@ -51,6 +54,7 @@ import com.example.globalmonitor.presentation.main.MainViewModel
 import com.example.globalmonitor.ui.theme.GlobalMonitorTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -73,68 +77,35 @@ class MainActivity : ComponentActivity() {
             val viewModel = viewModel<MainViewModel>()
             viewModel.startPlayBackLiveData(this)
             GlobalMonitorTheme {
-                val configuration = LocalConfiguration.current
+                val lazystate = rememberLazyListState()
+//                MainScreen(viewModel = viewModel, state = lazystate)
+                LazyRow(state = viewModel.lazyMenuState, modifier = Modifier.fillMaxWidth(), userScrollEnabled = false){
+                    item {
+                        HomeScreen(viewModel, viewModel.state.songsList)
+                    }
+                    item {
+                        HomeScreen(viewModel, emptyList())
+                    }
+                    item {
+                        HomeScreen(viewModel, emptyList())
+                    }
+                    item {
+                        HomeScreen(viewModel, emptyList())
+                    }
+                }
                 ConstraintLayout(
                     Modifier
                         .fillMaxSize()
                         .background(Color(0, 0, 0, 0))) {
-                    val (topMusicController, errorSnackBar, songInfoScreen, bottomBlur, tabScreen, songsList) = createRefs()
+                    val (topMusicController, errorSnackBar, songInfoScreen, bottomBlur, tabScreen, songsList, cnt) = createRefs()
                     val ht by animateDpAsState(targetValue = viewModel.heigt, animationSpec = TweenSpec(400))
                     SongInfoScreen(mainViewModel = viewModel, modifier = Modifier
-                        .constrainAs(songInfoScreen){
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        .zIndex(10f)
+                        .constrainAs(songInfoScreen) {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
                             top.linkTo(parent.top, margin = ht)
-                    })
-                    Surface(color = Color.Transparent,modifier = Modifier
-                        .fillMaxWidth()
-                        .zIndex(8f)
-                        .constrainAs(songsList) {
-                            top.linkTo(parent.top, margin = 60.dp)
-                        }) {
-                        LazyColumn(Modifier.fillMaxSize()){
-                            itemsIndexed(viewModel.state.songsList){index , song ->
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        viewModel.playOrToggleSong(song)
-                                        lifecycleScope.launch {
-                                            viewModel.lazystate.scrollToItem(
-                                                viewModel.currentSongIndex
-                                            )
-                                        }
-                                    }
-                                    .height(80.dp)
-                                    .padding(10.dp, 5.dp)) {
-                                    Image(
-                                        painter = rememberAsyncImagePainter(model = song.imageUri),
-                                        contentDescription = "song image",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .padding(0.dp, 0.dp, 10.dp, 0.dp)
-                                            .size(60.dp)
-                                    )
-                                    Column(Modifier.weight(1f)) {
-                                        Text(
-                                            text = song.title,
-                                            fontSize = 17.sp,
-                                            overflow = TextOverflow.Ellipsis,
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
-                                        )
-                                        Text(
-                                            text = song.subtitle,
-                                            fontSize = 12.sp,
-                                            overflow = TextOverflow.Ellipsis,
-                                            color = Color.Black,
-                                            modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                        })
                     Surface(color = Color.Transparent,
                         modifier = Modifier
                             .background(
@@ -181,7 +152,10 @@ class MainActivity : ComponentActivity() {
                                 .clickable(
                                     interactionSource = interactionSource,
                                     indication = null
-                                ) { viewModel.iconClick(1) }
+                                ) { viewModel.iconClick(1)
+                                    lifecycleScope.launch {
+//                                        viewModel.lazyMenuState.animateScrollToItem(0)
+                                    }}
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.home_icon), contentDescription = "home", tint = viewModel.colorHome, )
                             Text(text = "Home", fontSize = 8.sp, color = viewModel.colorHome, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
@@ -192,7 +166,10 @@ class MainActivity : ComponentActivity() {
                                 .clickable(
                                     interactionSource = interactionSource,
                                     indication = null
-                                ) { viewModel.iconClick(2) }
+                                ) { viewModel.iconClick(2)
+                                    lifecycleScope.launch {
+//                                        viewModel.lazyMenuState.animateScrollToItem(1)
+                                    }}
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.search_icon), contentDescription = "search", tint = viewModel.colorSearch)
                             Text(text = "Search", fontSize = 8.sp, color = viewModel.colorSearch, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
@@ -203,9 +180,14 @@ class MainActivity : ComponentActivity() {
                                 .clickable(
                                     interactionSource = interactionSource,
                                     indication = null
-                                ) { viewModel.iconClick(3) }
-                                .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.playlist_icon), contentDescription = "playlist", tint = viewModel.colorPlay)
-                            Text(text = "Library", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+                                ) {
+                                    viewModel.iconClick(3)
+                                    lifecycleScope.launch {
+//                                        viewModel.lazyMenuState.animateScrollToItem(2)
+                                    }
+                                }
+                                .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.storage_icon), contentDescription = "storage", tint = viewModel.colorPlay)
+                            Text(text = "Storage", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
                         Column() {
                             Icon(modifier = Modifier
@@ -214,7 +196,10 @@ class MainActivity : ComponentActivity() {
                                 .clickable(
                                     interactionSource = interactionSource,
                                     indication = null
-                                ) { viewModel.iconClick(4) }
+                                ) { viewModel.iconClick(4)
+                                    lifecycleScope.launch {
+//                                        viewModel.lazyMenuState.animateScrollToItem(3)
+                                    }}
                                 .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.profile_icon), contentDescription = "profile", tint = viewModel.colorProf)
                             Text(text = "Profile", fontSize = 8.sp, color = viewModel.colorProf, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
                         }
