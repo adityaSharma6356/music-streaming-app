@@ -1,6 +1,5 @@
-package com.example.globalmonitor.presentation.main
+package com.example.globalmonitor.presentation.viewmodels
 
-import android.app.LocaleConfig
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
@@ -17,22 +16,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColor
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.example.globalmonitor.R
 import com.example.globalmonitor.data.entities.SongModel
 import com.example.globalmonitor.data.mapper.toSongModel
-import com.example.globalmonitor.exoplayer.*
+import com.example.globalmonitor.exoplayer.MusicServiceConnection
+import com.example.globalmonitor.exoplayer.currentPlaybackPosition
+import com.example.globalmonitor.exoplayer.isPlayEnabled
+import com.example.globalmonitor.exoplayer.isPlaying
+import com.example.globalmonitor.exoplayer.isPrepared
 import com.example.globalmonitor.other.Constants
 import com.example.globalmonitor.other.Constants.MEDIA_ROOT_ID
 import com.example.globalmonitor.presentation.SongsListState
 import com.example.globalmonitor.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import java.net.URL
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,14 +70,11 @@ class MainViewModel @Inject constructor(
     private val playbackState = musicServiceConnection.playbackState
     private val lightColor = Color(119, 118, 118, 255)
     var colorHome by mutableStateOf(Color.White)
-    var colorSearch by mutableStateOf(lightColor)
     var colorPlay by mutableStateOf(lightColor)
     var colorProf by mutableStateOf(lightColor)
     var lazystate by mutableStateOf(LazyListState())
-    var lazyMenuState by mutableStateOf(LazyListState())
     var isSongEnding = false
     var isReplayEnabled = false
-    var replayColor = Color.Gray
 
     private var scope : Job? = null
     private var scope2 : Job? = null
@@ -92,25 +100,16 @@ class MainViewModel @Inject constructor(
         when(i){
             1-> {
                 colorHome = Color.White
-                colorSearch = lightColor
                 colorPlay = lightColor
                 colorProf =lightColor
             }
             2-> {
-                colorSearch = Color.White
+                colorPlay = Color.White
                 colorHome = lightColor
-                colorPlay = lightColor
                 colorProf = lightColor
             }
             3-> {
-                colorPlay = Color.White
-                colorSearch = lightColor
-                colorHome = lightColor
-                colorProf = lightColor
-            }
-            4-> {
                 colorProf = Color.White
-                colorSearch = lightColor
                 colorPlay = lightColor
                 colorHome = lightColor
             }
@@ -275,6 +274,7 @@ class MainViewModel @Inject constructor(
 
 
     fun playOrToggleSong(mediaItem: SongModel, toggle: Boolean = false) {
+        Log.d("playLog", mediaItem.mediaid+" "+curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID))
         val isPrepared = playbackState.value?.isPrepared ?: false
         if(isPrepared && mediaItem.mediaid ==
             curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)) {

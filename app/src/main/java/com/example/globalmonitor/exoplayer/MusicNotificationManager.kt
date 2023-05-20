@@ -33,7 +33,7 @@ class MusicNotificationManager(
             .setChannelDescriptionResourceId(R.string.notification_channel_description)
             .setNotificationListener(notificationListner)
             .build().apply {
-                setSmallIcon(R.drawable.default_music_profile)
+                setSmallIcon(R.drawable.default_music_icon)
                 setMediaSessionToken(sessionToken)
             }
     }

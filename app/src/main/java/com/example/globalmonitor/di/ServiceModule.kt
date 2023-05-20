@@ -1,6 +1,7 @@
 package com.example.globalmonitor.di
 
 import android.content.Context
+import com.example.globalmonitor.data.local.LocalMediaSource
 import com.example.globalmonitor.data.remote.MusicDatabase
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -49,6 +50,14 @@ object ServiceModule {
     @Provides
     @ServiceScoped
     fun provideMusicDatabase() = MusicDatabase()
+
+    @Provides
+    @ServiceScoped
+    fun provideLocalMediaSource(
+        @ApplicationContext context: Context
+    ) = LocalMediaSource(context)
+
+
 }
 
 

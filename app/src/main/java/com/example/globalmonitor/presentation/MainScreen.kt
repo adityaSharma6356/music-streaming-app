@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,20 +31,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.lifecycleScope
 import coil.compose.rememberAsyncImagePainter
 import com.example.globalmonitor.data.entities.SongModel
-import com.example.globalmonitor.data.entities.Songs
-import com.example.globalmonitor.presentation.main.MainViewModel
+import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, state: LazyListState) {
-
+    LazyRow(state = state, modifier = Modifier.fillMaxWidth(), userScrollEnabled = false){
+        item {
+            HomeScreen(viewModel, viewModel.state.songsList, "Latest Hits")
+        }
+        item {
+            HomeScreen(viewModel, emptyList(), "Local Songs")
+        }
+        item {
+            HomeScreen(viewModel, emptyList(), "Profile")
+        }
+    }
 }
 
 @Composable
-fun HomeScreen(viewModel: MainViewModel, songlist: List<SongModel>){
+fun HomeScreen(viewModel: MainViewModel, songlist: List<SongModel>, title: String){
     val lifecycleScope = rememberCoroutineScope()
     val config = LocalConfiguration.current
     Surface(color = Color.Transparent,modifier = Modifier
@@ -51,16 +60,16 @@ fun HomeScreen(viewModel: MainViewModel, songlist: List<SongModel>){
         .zIndex(0f)
         .width(config.screenWidthDp.dp)
     ) {
-        Column() {
+        Column {
             Box(contentAlignment = Alignment.CenterStart,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
                     .background(Color.Black)
             ) {
-                Text(text = "Latest Hits", fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(15.dp, 0.dp))
+                Text(text = title, fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(15.dp, 0.dp))
             }
-            LazyColumn(Modifier.fillMaxWidth()) {
+            LazyColumn(Modifier.fillMaxWidth(), contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, 200.dp)) {
                 itemsIndexed(songlist){_ , song ->
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -86,10 +95,11 @@ fun HomeScreen(viewModel: MainViewModel, songlist: List<SongModel>){
                             Text(
                                 text = song.title,
                                 fontSize = 17.sp,
+                                maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
+                                modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp),
                             )
                             Text(
                                 text = song.subtitle,

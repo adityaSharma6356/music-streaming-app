@@ -1,8 +1,12 @@
 package com.example.globalmonitor.exoplayer
 
+import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_URI
 import androidx.core.net.toUri
+import com.example.globalmonitor.data.entities.SongModel
+import com.example.globalmonitor.data.local.LocalMediaSource
 import com.example.globalmonitor.data.mapper.toMediaBrowserCompatMediaItem
 import com.example.globalmonitor.data.mapper.toMediaMetaDataCompat
 import com.example.globalmonitor.data.remote.MusicDatabase
@@ -12,10 +16,12 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 class FirebaseMusicSource @Inject constructor(
-    private val musicDatabase: MusicDatabase
+    private val musicDatabase: MusicDatabase,
+    private val localDatabase: LocalMediaSource
 ) {
 
     var songs = emptyList<MediaMetadataCompat>()
@@ -23,8 +29,11 @@ class FirebaseMusicSource @Inject constructor(
     suspend fun fetchMediaData() = withContext(Dispatchers.Main){
         state = State.STATE_INITIALIZING
         val allSongs = musicDatabase.getSongsList()
-//        Log.d("somelog", allSongs.toString())
-        songs = allSongs.map { it.toMediaMetaDataCompat() }
+        val finalList = mutableListOf<SongModel>()
+        finalList.addAll(allSongs)
+//        val allLocalSongs = localDatabase.getLocalSongs(0)
+//        finalList.addAll(allLocalSongs)
+        songs = finalList.map { it.toMediaMetaDataCompat() }
         state = State.STATE_INITIALIZED
     }
 
@@ -32,7 +41,13 @@ class FirebaseMusicSource @Inject constructor(
         val concatenatingMediaSource = ConcatenatingMediaSource()
         songs.forEach {
             val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(it.getString(METADATA_KEY_MEDIA_URI).toUri()))
+                .createMediaSource(MediaItem.fromUri(
+                    if(it.getString(METADATA_KEY_MEDIA_ID).toInt() < 1000){
+                        it.getString(METADATA_KEY_MEDIA_URI).toUri()
+                    }
+                    else {
+                        Uri.fromFile(File(it.getString(METADATA_KEY_MEDIA_URI)))
+                    }))
             concatenatingMediaSource.addMediaSource(mediaSource)
         }
         return concatenatingMediaSource

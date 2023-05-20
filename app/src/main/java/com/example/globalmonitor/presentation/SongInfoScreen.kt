@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -21,7 +20,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Slider
-import androidx.compose.material.SliderColors
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -35,10 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 //import androidx.compose.ui.node.CanFocusChecker.end
@@ -53,11 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.request.ImageRequest
 import com.example.globalmonitor.R
-import com.example.globalmonitor.presentation.main.MainViewModel
-import kotlinx.coroutines.NonDisposableHandle.parent
+import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,7 +62,8 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
     val configuration = LocalConfiguration.current
     val interactionSource = remember { MutableInteractionSource() }
     val color by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[1].toArgb()), animationSpec = TweenSpec(500))
-    val colorD by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[0].toArgb()), animationSpec = TweenSpec(500))
+//    val colorD by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[0].toArgb()), animationSpec = TweenSpec(500))
+    val colorD = Color.Black
     BackHandler(mainViewModel.expandedSongScreen) {
         mainViewModel.expandedSongScreen = false
         mainViewModel.changeHeight(configuration)

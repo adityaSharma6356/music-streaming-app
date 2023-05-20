@@ -1,7 +1,5 @@
 package com.example.globalmonitor.data.entities
 
-import androidx.compose.ui.graphics.Color
-
 data class Songs (
     val imageUri: String = "",
     val mediaid: String = "",
@@ -9,4 +7,5 @@ data class Songs (
     val subtitle: String = "",
     val title: String = "",
     val duration: Long = 0L,
+    val local : Boolean = false,
 )

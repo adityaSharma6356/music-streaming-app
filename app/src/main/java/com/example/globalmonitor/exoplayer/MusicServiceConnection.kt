@@ -7,8 +7,10 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.globalmonitor.data.mapper.toSongModel
 import com.example.globalmonitor.other.Constants.NETWORK_ERROR
 import com.example.globalmonitor.util.Event
 import com.example.globalmonitor.util.Resource
@@ -85,6 +87,7 @@ class MusicServiceConnection(
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             _curPlayingSong.postValue(metadata)
+//            Log.d("playLog", metadata?.toSongModel()?.mediaid.toString())
         }
 
         override fun onSessionEvent(event: String?, extras: Bundle?) {
