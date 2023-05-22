@@ -1,6 +1,6 @@
 package com.example.globalmonitor.presentation
 
-import android.util.Log
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.TweenSpec
@@ -37,8 +37,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-//import androidx.compose.ui.node.CanFocusChecker.end
-//import androidx.compose.ui.node.CanFocusChecker.start
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,7 +60,6 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
     val configuration = LocalConfiguration.current
     val interactionSource = remember { MutableInteractionSource() }
     val color by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[1].toArgb()), animationSpec = TweenSpec(500))
-//    val colorD by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[0].toArgb()), animationSpec = TweenSpec(500))
     val colorD = Color.Black
     BackHandler(mainViewModel.expandedSongScreen) {
         mainViewModel.expandedSongScreen = false
@@ -148,7 +145,6 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                                 mainViewModel.scope3?.cancel()
                                 mainViewModel.scope3 = launch {
                                     delay(1000)
-                                    Log.d("launched", "running")
                                     mainViewModel.lazystate.scrollToItem(mainViewModel.currentSongIndex)
                                 }
                             }

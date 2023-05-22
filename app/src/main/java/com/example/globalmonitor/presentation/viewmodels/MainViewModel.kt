@@ -10,8 +10,10 @@ import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
 import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.example.globalmonitor.R
+import com.example.globalmonitor.data.entities.PlayListItem
 import com.example.globalmonitor.data.entities.SongModel
 import com.example.globalmonitor.data.mapper.toSongModel
 import com.example.globalmonitor.exoplayer.MusicServiceConnection
@@ -75,6 +78,10 @@ class MainViewModel @Inject constructor(
     var lazystate by mutableStateOf(LazyListState())
     var isSongEnding = false
     var isReplayEnabled = false
+    var likedSongs = mutableStateListOf<SongModel>()
+    var playLists = mutableListOf(PlayListItem())
+    var theseSongs = mutableListOf<SongModel>()
+    var tempPlaylist = mutableStateListOf<PlayListItem>()
 
     private var scope : Job? = null
     private var scope2 : Job? = null
@@ -94,6 +101,9 @@ class MainViewModel @Inject constructor(
                     pallete.getLightVibrantColor(Color.White.toArgb()).toColor(),
                 )
         }
+    }
+    fun setPlayListItems(){
+        tempPlaylist = playLists.toMutableStateList()
     }
 
     fun iconClick(i:Int){

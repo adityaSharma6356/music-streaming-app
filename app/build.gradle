@@ -147,4 +147,7 @@ dependencies {
     //Flinge
     implementation "dev.chrisbanes.snapper:snapper:0.1.0"
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation "com.github.skydoves:colorpicker-compose:1.0.0"
 }

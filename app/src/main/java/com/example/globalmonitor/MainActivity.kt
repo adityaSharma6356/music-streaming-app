@@ -27,6 +27,8 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.globalmonitor.data.local.loadFavouriteSongs
+import com.example.globalmonitor.data.local.loadPlaylists
 import com.example.globalmonitor.presentation.BottomNav
 import com.example.globalmonitor.presentation.MainScreen
 import com.example.globalmonitor.presentation.SongInfoScreen
@@ -68,6 +70,9 @@ class MainActivity : ComponentActivity() {
             }
             val viewModel = viewModel<MainViewModel>()
             viewModel.startPlayBackLiveData(this)
+            loadFavouriteSongs(viewModel, this)
+            loadPlaylists(viewModel, this)
+            viewModel.theseSongs = viewModel.likedSongs
             GlobalMonitorTheme {
                 val lazystate = rememberLazyListState()
                 MainScreen(viewModel = viewModel, state = lazystate)
@@ -86,9 +91,10 @@ class MainActivity : ComponentActivity() {
                         })
                     Surface(color = Color.Transparent,
                         modifier = Modifier
-                            .background(brush = Brush.verticalGradient(listOf(Color(0, 0, 0, 0), Color(0, 0, 0, 159), Color.Black, Color.Black)))
+                            .background(brush = Brush.verticalGradient(
+                                listOf(Color(0, 0, 0, 0),Color(0, 0, 0, 201), Color(0, 0, 0, 235), Color.Black)))
                             .fillMaxWidth()
-                            .height(150.dp)
+                            .height(200.dp)
                             .constrainAs(bottomBlur) {
                                 bottom.linkTo(parent.bottom,)
                             }) {
@@ -98,7 +104,7 @@ class MainActivity : ComponentActivity() {
                         Modifier
                             .zIndex(9f)
                             .constrainAs(topMusicController) {
-                                bottom.linkTo(bottomBlur.top, margin = (-40).dp)
+                                bottom.linkTo(bottomBlur.top, margin = (-90).dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                             },

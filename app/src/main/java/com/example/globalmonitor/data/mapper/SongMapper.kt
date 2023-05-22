@@ -58,6 +58,5 @@ fun Songs.toSongModel(): SongModel{
         subtitle,
         title,
         duration,
-        Color.Black
     )
 }

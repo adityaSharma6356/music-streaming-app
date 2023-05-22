@@ -54,8 +54,8 @@ fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
         Icon(modifier = Modifier
             .height(40.dp)
             .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.storage_icon), contentDescription = "storage", tint = viewModel.colorPlay)
-        Text(text = "Storage", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.storage_icon), contentDescription = "playlists", tint = viewModel.colorPlay)
+        Text(text = "Playlists", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
     }
     Column(modifier = Modifier
         .clickable(

@@ -9,7 +9,6 @@ data class SongModel (
     val subtitle: String = "",
     val title: String = "",
     val duration: Long = 0L,
-    val color: Color = Color(0,0,0),
     val dateAdded : String  = "",
     val local : Boolean = false
 )
