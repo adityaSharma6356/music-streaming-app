@@ -1,7 +1,7 @@
 package com.example.globalmonitor
 
-import android.app.Activity
 import android.Manifest
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,9 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +42,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @OptIn(ExperimentalFoundationApi::class)
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -74,13 +76,13 @@ class MainActivity : ComponentActivity() {
             loadPlaylists(viewModel, this)
             viewModel.theseSongs = viewModel.likedSongs
             GlobalMonitorTheme {
-                val lazystate = rememberLazyListState()
-                MainScreen(viewModel = viewModel, state = lazystate)
+                val lazystate = rememberPagerState()
+                MainScreen(mainViewModel = viewModel, state = lazystate)
                 ConstraintLayout(
                     Modifier
                         .fillMaxSize()
                         .background(Color(0, 0, 0, 0))) {
-                    val (topMusicController, errorSnackBar, songInfoScreen, bottomBlur, tabScreen, songsList, cnt) = createRefs()
+                    val (topMusicController, songInfoScreen, bottomBlur, tabScreen) = createRefs()
                     val ht by animateDpAsState(targetValue = viewModel.heigt, animationSpec = TweenSpec(400))
                     SongInfoScreen(mainViewModel = viewModel, modifier = Modifier
                         .zIndex(10f)
@@ -96,7 +98,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .height(200.dp)
                             .constrainAs(bottomBlur) {
-                                bottom.linkTo(parent.bottom,)
+                                bottom.linkTo(parent.bottom)
                             }) {
                     }
                     TopMusicControllerScreen(

@@ -1,12 +1,13 @@
 package com.example.globalmonitor.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,8 +22,9 @@ import com.example.globalmonitor.R
 import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
+fun BottomNav(viewModel:MainViewModel, lazystate:PagerState) {
     val csc = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
     Column(modifier = Modifier
@@ -30,9 +32,9 @@ fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
             interactionSource = interactionSource,
             indication = null
         ) {
-            viewModel.iconClick(1)
+//            viewModel.iconClick(1)
             csc.launch {
-                lazystate.animateScrollToItem(0)
+                lazystate.animateScrollToPage(0)
             }
         }) {
         Icon(modifier = Modifier
@@ -46,9 +48,9 @@ fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
             interactionSource = interactionSource,
             indication = null
         ) {
-            viewModel.iconClick(2)
+//            viewModel.iconClick(2)
             csc.launch {
-                lazystate.animateScrollToItem(1)
+                lazystate.animateScrollToPage(1)
             }
         }) {
         Icon(modifier = Modifier
@@ -62,9 +64,9 @@ fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
             interactionSource = interactionSource,
             indication = null
         ) {
-            viewModel.iconClick(3)
+//            viewModel.iconClick(3)
             csc.launch {
-                lazystate.animateScrollToItem(2)
+                lazystate.animateScrollToPage(2)
             }
         }) {
         Icon(modifier = Modifier

@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
+fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier) {
 
     val configuration = LocalConfiguration.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -70,7 +70,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
         .zIndex(10f)
         .background(Color.White)
         .height(configuration.screenHeightDp.dp + 90.dp)) {
-        val (fullScreenShadow, replayButton, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal, seekLine) = createRefs()
+        val (fullScreenShadow, replayButton, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal) = createRefs()
         val lazycorscope = rememberCoroutineScope()
         Surface(
             modifier = Modifier
@@ -100,7 +100,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                     .pointerInput(Unit) {
                         var x = 0f
                         detectHorizontalDragGestures(
-                            onHorizontalDrag = { change, dragAmount ->
+                            onHorizontalDrag = { _, dragAmount ->
                                 lazycorscope.launch {
                                     x += dragAmount
                                     mainViewModel.lazystate.scrollBy(-dragAmount * 1f)
@@ -129,7 +129,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                         )
                     }
                     .fillMaxWidth(), state = mainViewModel.lazystate){
-                    itemsIndexed(mainViewModel.state.songsList){ index, song ->
+                    itemsIndexed(mainViewModel.state.songsList){ _, song ->
                         Box(modifier = Modifier
                             .fillParentMaxWidth()
                             .background(Color.Transparent)) {
@@ -176,8 +176,8 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
             modifier = Modifier
                 .constrainAs(playPauseButton) {
                     bottom.linkTo(parent.bottom, margin = 70.dp)
-                    start.linkTo(parent.start,)
-                    end.linkTo(parent.end,)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 }
                 .size(70.dp)
                 .zIndex(10f)
@@ -273,8 +273,8 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier,) {
                 .zIndex(11f)
                 .constrainAs(seekBar) {
                     bottom.linkTo(playPauseButton.top, margin = 50.dp)
-                    start.linkTo(parent.start,)
-                    end.linkTo(parent.end,)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 },
             value = mainViewModel.finalposi, onValueChange = {
                 mainViewModel.shouldUpdateSeekbar = false

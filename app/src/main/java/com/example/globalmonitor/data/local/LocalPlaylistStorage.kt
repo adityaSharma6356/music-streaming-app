@@ -1,16 +1,13 @@
 package com.example.globalmonitor.data.local
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import com.example.globalmonitor.data.entities.PlayListItem
 import com.example.globalmonitor.data.entities.SongModel
 import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 
 fun storeFavSong(context: Context,viewModel: MainViewModel) {
     val sharedpef = context.getSharedPreferences("SnowFlakeStorageFile" , Context.MODE_PRIVATE)
@@ -62,10 +59,10 @@ fun loadPlaylists(viewModel: MainViewModel, context: Context){
     if(json!=null) {
         viewModel.playLists = try {
             val turnsType = Array<PlayListItem>::class.java
-            Gson().fromJson(json, turnsType).toMutableList()
+            Gson().fromJson(json, turnsType).toMutableList().toMutableStateList()
         } catch (e: JsonSyntaxException){
             e.printStackTrace()
-            mutableListOf<PlayListItem>()
+            mutableStateListOf()
         }
     }
 }

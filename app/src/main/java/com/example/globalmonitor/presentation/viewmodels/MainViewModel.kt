@@ -7,13 +7,11 @@ import android.icu.util.TimeZone
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DURATION
 import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -53,7 +51,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val musicServiceConnection : MusicServiceConnection,
 ) : ViewModel() {
-    var currentposi = 0
+    private var currentposi = 0
     var finalposi by mutableStateOf(0f)
     var heigt by  mutableStateOf(1000.dp)
     var expandedSongScreen by mutableStateOf(false)
@@ -61,12 +59,12 @@ class MainViewModel @Inject constructor(
     var currentSongIndex by mutableStateOf(0)
     var playIcon by mutableStateOf(R.drawable.play_arrow)
     var circlePlayIcon by mutableStateOf(R.drawable.circle_play)
-    var someKindOfError by mutableStateOf(false)
-    var errorStatement = "No Internet"
+    private var someKindOfError by mutableStateOf(false)
+    private var errorStatement = "No Internet"
     var minute by mutableStateOf("00")
     var liveminute by mutableStateOf("00")
     var shouldUpdateSeekbar = true
-    var dominantColors by mutableStateOf(listOf<android.graphics.Color>(android.graphics.Color.argb(255,0,0,0).toColor(),android.graphics.Color.argb(255,0,0,0).toColor() ))
+    var dominantColors by mutableStateOf(listOf(android.graphics.Color.argb(255,0,0,0).toColor(),android.graphics.Color.argb(255,0,0,0).toColor() ))
     private val isConnected = musicServiceConnection.isConnected
     private val networkError = musicServiceConnection.networkError
     private val curPlayingSong = musicServiceConnection.curPlayingSong
@@ -79,7 +77,7 @@ class MainViewModel @Inject constructor(
     var isSongEnding = false
     var isReplayEnabled = false
     var likedSongs = mutableStateListOf<SongModel>()
-    var playLists = mutableListOf(PlayListItem())
+    var playLists = mutableStateListOf<PlayListItem>()
     var theseSongs = mutableListOf<SongModel>()
     var tempPlaylist = mutableStateListOf<PlayListItem>()
 
@@ -102,10 +100,6 @@ class MainViewModel @Inject constructor(
                 )
         }
     }
-    fun setPlayListItems(){
-        tempPlaylist = playLists.toMutableStateList()
-    }
-
     fun iconClick(i:Int){
         when(i){
             1-> {
@@ -284,7 +278,6 @@ class MainViewModel @Inject constructor(
 
 
     fun playOrToggleSong(mediaItem: SongModel, toggle: Boolean = false) {
-        Log.d("playLog", mediaItem.mediaid+" "+curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID))
         val isPrepared = playbackState.value?.isPrepared ?: false
         if(isPrepared && mediaItem.mediaid ==
             curPlayingSong.value?.getString(METADATA_KEY_MEDIA_ID)) {

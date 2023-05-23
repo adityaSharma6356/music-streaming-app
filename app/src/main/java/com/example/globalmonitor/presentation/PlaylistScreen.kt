@@ -16,13 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
@@ -34,15 +31,12 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -52,18 +46,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.example.globalmonitor.R
 import com.example.globalmonitor.data.entities.PlayListItem
-import com.example.globalmonitor.data.entities.SongModel
 import com.example.globalmonitor.data.local.storePlaylists
 import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 
 
 @Composable
-fun PlaylistsScreen(viewModel: MainViewModel, songlist: List<SongModel>, title: String ) {
+fun PlaylistsScreen(viewModel: MainViewModel, title: String ) {
     val configuration = LocalConfiguration.current
     var openDialogue by remember { mutableStateOf(false) }
     var openDialogueRename by remember { mutableStateOf(false) }
@@ -130,9 +121,9 @@ fun PlaylistsScreen(viewModel: MainViewModel, songlist: List<SongModel>, title: 
                                 .size(30.dp), tint = Color.White)
                         }
                     }
-                    LazyVerticalGrid(columns = GridCells.Fixed(2), contentPadding = PaddingValues(0.dp, 0.dp,0.dp, 120.dp)){
+                    LazyVerticalGrid(modifier = Modifier.weight(1f),columns = GridCells.Fixed(2), contentPadding = PaddingValues(0.dp, 0.dp,0.dp, 120.dp)){
                         viewModel.tempPlaylist = viewModel.playLists.toMutableStateList()
-                        itemsIndexed(viewModel.tempPlaylist){it , item ->
+                        itemsIndexed(viewModel.tempPlaylist){ it, _ ->
                             var dropDownMenu by remember { mutableStateOf(false) }
                             if(viewModel.tempPlaylist[it].name!="" && viewModel.tempPlaylist.isNotEmpty()){
                                 Card(shape = RoundedCornerShape(20.dp),
@@ -163,20 +154,6 @@ fun PlaylistsScreen(viewModel: MainViewModel, songlist: List<SongModel>, title: 
                                         }, modifier = Modifier.background(Color.White)) {
                                             Text(
                                                 text = "Rename",
-                                                fontSize = 15.sp,
-                                                color = Color.Black
-                                            )
-                                        }
-                                        DropdownMenuItem(onClick = {  },modifier = Modifier.background(Color.White) ) {
-                                            Text(
-                                                text = "Change name color",
-                                                fontSize = 15.sp,
-                                                color = Color.Black
-                                            )
-                                        }
-                                        DropdownMenuItem(onClick = {  }, modifier = Modifier.background(Color.White)) {
-                                            Text(
-                                                text = "Change playlist color",
                                                 fontSize = 15.sp,
                                                 color = Color.Black
                                             )

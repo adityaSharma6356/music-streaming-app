@@ -1,63 +1,46 @@
 package com.example.globalmonitor.presentation
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Icon
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.compose.rememberAsyncImagePainter
-import com.example.globalmonitor.R
 import com.example.globalmonitor.data.entities.SongModel
-import com.example.globalmonitor.data.local.storeFavSong
 import com.example.globalmonitor.presentation.viewmodels.MainViewModel
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier, state: LazyListState) {
-    LazyRow(state = state, modifier = Modifier.fillMaxWidth(), userScrollEnabled = false){
-        item {
-            HomeScreen(viewModel, viewModel.state.songsList, "Latest Hits")
-        }
-        item {
-            PlaylistsScreen(viewModel, emptyList(), "Playlists")
-        }
-        item {
-            HomeScreen(viewModel, emptyList(), "Profile")
+fun MainScreen(mainViewModel: MainViewModel, state: PagerState) {
+    LaunchedEffect(key1 = state.currentPage){
+        mainViewModel.iconClick(state.currentPage+1)
+    }
+    HorizontalPager(state = state, modifier = Modifier.fillMaxWidth(), pageCount = 3){
+        when(it){
+            0 ->{
+                HomeScreen(mainViewModel, mainViewModel.state.songsList, "Latest Hits")
+            }
+            1 -> {
+                PlaylistsScreen(mainViewModel, "Playlists")
+            }
+            2 -> {
+                HomeScreen(mainViewModel, emptyList(), "Profile")
+            }
         }
     }
 }
