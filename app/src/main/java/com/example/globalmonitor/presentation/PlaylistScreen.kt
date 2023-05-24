@@ -25,6 +25,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -65,8 +66,6 @@ fun PlaylistsScreen(viewModel: MainViewModel, title: String ) {
     var setRenameIndex by remember {
         mutableStateOf(0)
     }
-
-
     BackHandler(opened) {
         opened = false
         viewModel.expandedSongScreen = false
@@ -145,17 +144,17 @@ fun PlaylistsScreen(viewModel: MainViewModel, title: String ) {
                                                 dropDownMenu = true
                                             }, tint = Color.White)
                                     }
-                                    DropdownMenu(modifier = Modifier.background(Color.White),expanded = dropDownMenu, onDismissRequest = { dropDownMenu = false }, offset = DpOffset(0.dp , (-100).dp,
+                                    DropdownMenu(modifier = Modifier.background(MaterialTheme.colors.background),expanded = dropDownMenu, onDismissRequest = { dropDownMenu = false }, offset = DpOffset(0.dp , (-100).dp,
                                     )) {
                                         DropdownMenuItem(onClick = {
                                             setRenameIndex = it
                                             openDialogueRename = true
                                             dropDownMenu = false
-                                        }, modifier = Modifier.background(Color.White)) {
+                                        }) {
                                             Text(
                                                 text = "Rename",
                                                 fontSize = 15.sp,
-                                                color = Color.Black
+                                                color = MaterialTheme.colors.onPrimary
                                             )
                                         }
                                         DropdownMenuItem(onClick = {
@@ -163,11 +162,11 @@ fun PlaylistsScreen(viewModel: MainViewModel, title: String ) {
                                             viewModel.tempPlaylist.removeAt(it)
                                             storePlaylists(context, viewModel)
                                             dropDownMenu = false
-                                                                   },modifier = Modifier.background(Color.White) ) {
+                                                                   } ) {
                                             Text(
                                                 text = "Delete",
                                                 fontSize = 15.sp,
-                                                color = Color.Black
+                                                color = MaterialTheme.colors.onPrimary
                                             )
                                         }
                                     }

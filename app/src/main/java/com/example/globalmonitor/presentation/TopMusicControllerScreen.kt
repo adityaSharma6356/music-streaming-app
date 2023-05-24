@@ -73,7 +73,7 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
                         .padding(5.dp, 5.dp, 0.dp, 0.dp)
                         .fillMaxWidth()
                         .basicMarquee(),
-                    color = MaterialTheme.colors.onBackground,
+                    color = Color.White,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
@@ -84,7 +84,7 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
                     modifier = Modifier
                         .padding(5.dp, 5.dp, 0.dp, 0.dp)
                         .fillMaxWidth(),
-                    color = MaterialTheme.colors.onBackground,
+                    color =Color.White,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
@@ -92,7 +92,7 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
             Icon(
                 painter = painterResource(id = R.drawable.play_prev_song_icon),
                 contentDescription = "previous",
-                tint = MaterialTheme.colors.onBackground,
+                tint = Color.White,
                 modifier = Modifier
                     .size(45.dp)
                     .padding(0.dp, 0.dp, 15.dp, 0.dp)
@@ -109,7 +109,7 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
             Icon(
                 painter = painterResource(id = viewModel.playIcon),
                 contentDescription = "play/pause",
-                tint = MaterialTheme.colors.onBackground,
+                tint =Color.White,
                 modifier = Modifier
                     .size(45.dp)
                     .padding(0.dp, 0.dp, 15.dp, 0.dp)
@@ -123,7 +123,7 @@ fun TopMusicControllerScreen(viewModel: MainViewModel, modifier: Modifier = Modi
             Icon(
                 painter = painterResource(id = R.drawable.play_next_song_icon),
                 contentDescription = "next",
-                tint = MaterialTheme.colors.onBackground,
+                tint =Color.White,
                 modifier = Modifier
                     .size(45.dp)
                     .padding(0.dp, 0.dp, 15.dp, 0.dp)

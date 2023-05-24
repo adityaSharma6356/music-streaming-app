@@ -1,11 +1,9 @@
 package com.example.globalmonitor.presentation
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,13 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -57,7 +56,7 @@ import com.example.globalmonitor.presentation.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean = true) {
     val context = LocalContext.current
@@ -65,14 +64,11 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
     var tempSong by remember {
         mutableStateOf(SongModel())
     }
-    val configuration = LocalConfiguration.current
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     BackHandler(bottomSheetState.isVisible) {
         lifecycleScope.launch {
             bottomSheetState.hide()
         }
-        viewModel.expandedSongScreen = false
-        viewModel.changeHeight(configuration)
     }
     ModalBottomSheetLayout(sheetElevation = 0.dp,
         sheetBackgroundColor = Color.Transparent,
@@ -82,15 +78,15 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                 modifier = Modifier
                     .padding(10.dp, 0.dp, 10.dp, 130.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color.White)
+                    .background(MaterialTheme.colors.background)
                     .fillMaxWidth()
                     .height(250.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Adding : "+tempSong.title, maxLines = 1, style = MaterialTheme.typography.h6, color = Color.Black, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, modifier = Modifier.padding(30.dp, 10.dp))
+                Text("Adding : "+tempSong.title, maxLines = 1, style = MaterialTheme.typography.h6, color = MaterialTheme.colors.onPrimary, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, modifier = Modifier.padding(30.dp, 10.dp))
                 Spacer(modifier = Modifier
                     .height(1.dp)
-                    .background(Color.Black)
+                    .background(MaterialTheme.colors.onPrimary)
                     .fillMaxWidth(0.9f)
                     .padding(bottom = 20.dp)
                     .align(Alignment.CenterHorizontally))
@@ -100,8 +96,8 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                              mutableStateOf(viewModel.tempPlaylist[it].list.contains(tempSong))
                         }
                         checked = viewModel.tempPlaylist[it].list.contains(tempSong)
-                        Text(text = item.name, fontSize = 18.sp, color = Color.Black, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Checkbox(colors = CheckboxDefaults.colors(uncheckedColor = Color.Black, checkedColor = Color.Black),
+                        Text(text = item.name, fontSize = 18.sp, color = MaterialTheme.colors.onPrimary, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Checkbox(colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.onPrimary, checkedColor = MaterialTheme.colors.onPrimary),
                             checked = checked,
                             onCheckedChange = { checkedOP ->
                                 if (checkedOP) {
@@ -131,29 +127,23 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
         sheetState = bottomSheetState,
         content = {
             LazyColumn(Modifier.fillMaxWidth(), contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, 200.dp)) {
-                itemsIndexed(songlist){_ , song ->
+                itemsIndexed(songlist){it , song ->
                     var ddm by remember {
                         mutableStateOf(false)
                     }
-
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {
-                                viewModel.playOrToggleSong(song)
-                                lifecycleScope.launch {
-                                    viewModel.lazystate.scrollToItem(
-                                        viewModel.currentSongIndex
-                                    )
-                                }
-                            },
-                            onLongClick = {
-                                ddm = true
+                        .clickable {
+                            lifecycleScope.launch {
+                                viewModel.lazystate.scrollToItem(
+                                    viewModel.currentSongIndex
+                                )
                             }
-                        )
+                            viewModel.playOrToggleSong(song)
+                        }
                         .height(80.dp)
                         .padding(10.dp, 5.dp)) {
-                        DropdownMenu( modifier = Modifier.background(Color.White),expanded = ddm, onDismissRequest = { ddm  = false }) {
+                        DropdownMenu( offset = DpOffset((-100).dp, 0.dp),modifier = Modifier.shadow(elevation = 10.dp).background(MaterialTheme.colors.background),expanded = ddm, onDismissRequest = { ddm  = false }) {
                             DropdownMenuItem(onClick = {
                                 tempSong = song
                                 viewModel.tempPlaylist = viewModel.playLists
@@ -162,7 +152,13 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                                 }
                                 ddm = false
                             }) {
-                                Text(text = "Add to playlist", color = Color.Black, fontSize = 15.sp)
+                                Text(text = "Add to playlist", color = MaterialTheme.colors.onPrimary, fontSize = 15.sp)
+                            }
+                            DropdownMenuItem(onClick = {
+                                viewModel.shareLink(context, "http://snowflake-streamer.000webhostapp.com/$it")
+                                ddm = false
+                            }) {
+                                Text(text = "Share song", color = MaterialTheme.colors.onPrimary, fontSize = 15.sp)
                             }
                         }
                         Image(
@@ -179,7 +175,7 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                                 fontSize = 17.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = Color.Black,
+                                color = MaterialTheme.colors.onPrimary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp),
                             )
@@ -187,7 +183,7 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                                 text = song.subtitle,
                                 fontSize = 12.sp,
                                 overflow = TextOverflow.Ellipsis,
-                                color = Color.Black,
+                                color = MaterialTheme.colors.onPrimary,
                                 modifier = Modifier.padding(10.dp, 5.dp, 0.dp, 0.dp)
                             )
                         }
@@ -197,8 +193,9 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                             Icon(painter = painterResource(id = icon),
                                 contentDescription = "liked",
                                 modifier = Modifier
-                                    .padding(5.dp, 15.dp)
-                                    .size(27.dp)
+                                    .padding(5.dp, 0.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .size(25.dp)
                                     .clickable {
                                         if (viewModel.likedSongs.contains(song)) {
                                             icon = R.drawable.not_liked_icon
@@ -209,9 +206,20 @@ fun SongList(viewModel: MainViewModel, songlist: List<SongModel>, show:Boolean =
                                             viewModel.likedSongs.add(song)
                                             storeFavSong(context, viewModel)
                                         }
-
                                     }
-                                , tint = Color.Black)
+                                , tint = MaterialTheme.colors.onPrimary)
+                            Icon(
+                                painter = painterResource(id = R.drawable.menu_icon),
+                                contentDescription = "menu",
+                                tint = MaterialTheme.colors.onPrimary,
+                                modifier = Modifier
+                                    .padding(5.dp, 0.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .size(25.dp)
+                                    .clickable {
+                                        ddm = true
+                                    }
+                            )
                         }
                     }
                 }

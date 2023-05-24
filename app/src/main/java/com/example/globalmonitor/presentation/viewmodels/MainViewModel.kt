@@ -1,5 +1,7 @@
 package com.example.globalmonitor.presentation.viewmodels
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
@@ -80,6 +82,9 @@ class MainViewModel @Inject constructor(
     var playLists = mutableStateListOf<PlayListItem>()
     var theseSongs = mutableListOf<SongModel>()
     var tempPlaylist = mutableStateListOf<PlayListItem>()
+    var openScreenNow by mutableStateOf(false)
+    var deepLinkMedia: Int? = null
+    var navColorsList = mutableStateListOf<Color>(Color.White, lightColor, lightColor, lightColor)
 
     private var scope : Job? = null
     private var scope2 : Job? = null
@@ -100,24 +105,15 @@ class MainViewModel @Inject constructor(
                 )
         }
     }
-    fun iconClick(i:Int){
-        when(i){
-            1-> {
-                colorHome = Color.White
-                colorPlay = lightColor
-                colorProf =lightColor
-            }
-            2-> {
-                colorPlay = Color.White
-                colorHome = lightColor
-                colorProf = lightColor
-            }
-            3-> {
-                colorProf = Color.White
-                colorPlay = lightColor
-                colorHome = lightColor
-            }
-        }
+    fun shareLink(context: Context, link: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, link)
+        context.startActivity(Intent.createChooser(intent, "Share link via"))
+    }
+    fun iconClick( indexCurr: Int, indexPrev: Int){
+        navColorsList[indexPrev] = lightColor
+        navColorsList[indexCurr] = Color.White
     }
     init {
         getSongsList()
@@ -154,11 +150,6 @@ class MainViewModel @Inject constructor(
             0.dp
         }
     }
-//    fun scrollToItem( indexed: Int){
-//        viewModelScope.launch {
-//            lazyMenuState.animateScrollToItem(indexed)
-//        }
-//    }
     fun startPlayBackLiveData(th: LifecycleOwner){
         curPlayerPosition.observe(th){
             it?.let {
@@ -307,6 +298,8 @@ class MainViewModel @Inject constructor(
         super.onCleared()
         musicServiceConnection.unsubscribe(MEDIA_ROOT_ID, object: MediaBrowserCompat.SubscriptionCallback() {})
         scope?.cancel()
+        scope2?.cancel()
+        scope3?.cancel()
     }
 
     private suspend fun getSongs(): Flow<Resource<List<SongModel>>> {
@@ -338,6 +331,10 @@ class MainViewModel @Inject constructor(
                 val songs = deferred.await()
                 emit(Resource.Loading(null, false))
                 emit(Resource.Success(songs))
+                delay(1500L)
+                if(deepLinkMedia!=null && deepLinkMedia!! >= 0 && deepLinkMedia!! < songs.size){
+                    playOrToggleSong(state.songsList[deepLinkMedia!!])
+                }
             } finally {
             }
         }

@@ -1,5 +1,6 @@
 package com.example.globalmonitor.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -8,17 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
+    primary = Color.Black,
     primaryVariant = Purple700,
     secondary = Teal200,
-    onPrimary = Color.White
+    onPrimary = Color.White,
+    background = Color(29, 29, 29, 255)
 )
 
+@SuppressLint("ConflictingOnColor")
 private val LightColorPalette = lightColors(
-    primary = Purple500,
+    primary = Color.White,
     primaryVariant = Purple700,
     secondary = Teal200,
-    onPrimary = Color.Black
+    onPrimary = Color.Black,
+    background = Color.White
 
     /* Other default colors to override
     background = Color.White,

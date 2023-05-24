@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,55 +28,79 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomNav(viewModel:MainViewModel, lazystate:PagerState) {
+fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
     val csc = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
+    var prevPage by remember {
+        mutableStateOf(0)
+    }
+
     Column(modifier = Modifier
         .clickable(
             interactionSource = interactionSource,
             indication = null
         ) {
-//            viewModel.iconClick(1)
             csc.launch {
-                lazystate.animateScrollToPage(0)
+                viewModel.iconClick(0, prevPage)
+                prevPage = 0
+                lazystate.animateScrollToItem(0)
             }
         }) {
         Icon(modifier = Modifier
             .height(40.dp)
             .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.home_icon), contentDescription = "home", tint = viewModel.colorHome, )
-        Text(text = "Home", fontSize = 8.sp, color = viewModel.colorHome, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.home_icon), contentDescription = "home", tint = viewModel.navColorsList[0], )
+        Text(text = "Home", fontSize = 8.sp, color = viewModel.navColorsList[0], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
     }
     Column(modifier = Modifier
         .clickable(
             interactionSource = interactionSource,
             indication = null
         ) {
-//            viewModel.iconClick(2)
             csc.launch {
-                lazystate.animateScrollToPage(1)
+                viewModel.iconClick(1, prevPage)
+                prevPage = 1
+                lazystate.animateScrollToItem(1)
             }
         }) {
         Icon(modifier = Modifier
             .height(40.dp)
             .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.storage_icon), contentDescription = "playlists", tint = viewModel.colorPlay)
-        Text(text = "Playlists", fontSize = 8.sp, color = viewModel.colorPlay, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.storage_icon), contentDescription = "playlists", tint = viewModel.navColorsList[1])
+        Text(text = "Playlists", fontSize = 8.sp, color = viewModel.navColorsList[1], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
     }
     Column(modifier = Modifier
         .clickable(
             interactionSource = interactionSource,
             indication = null
         ) {
-//            viewModel.iconClick(3)
             csc.launch {
-                lazystate.animateScrollToPage(2)
+                viewModel.iconClick(2, prevPage)
+                prevPage = 2
+                lazystate.animateScrollToItem(2)
             }
         }) {
         Icon(modifier = Modifier
             .height(40.dp)
             .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.profile_icon), contentDescription = "profile", tint = viewModel.colorProf)
-        Text(text = "Profile", fontSize = 8.sp, color = viewModel.colorProf, textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.profile_icon), contentDescription = "profile", tint = viewModel.navColorsList[2])
+        Text(text = "Profile", fontSize = 8.sp, color = viewModel.navColorsList[2], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+    }
+    Column(modifier = Modifier
+        .clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) {
+            csc.launch {
+                viewModel.iconClick(3, prevPage)
+                prevPage = 3
+                lazystate.animateScrollToItem(3)
+            }
+        }) {
+        Icon(modifier = Modifier
+            .height(40.dp)
+            .width(70.dp)
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.search_icon), contentDescription = "search", tint = viewModel.navColorsList[3])
+        Text(text = "Search", fontSize = 8.sp, color = viewModel.navColorsList[3], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
     }
 }
