@@ -1,8 +1,21 @@
 # music-streaming-app
 A music streaming application written in kotlin and jetpack compose offering dynamic theming and clean UI
-![image](https://github.com/adityaSharma6356/music-streaming-app/assets/115709232/dec78fdb-cdd6-40c7-b824-7d6cb12a5b07)
-![image](https://github.com/adityaSharma6356/music-streaming-app/assets/115709232/87a73d96-10ae-4904-b126-b7332d05e44d)
-![image](https://github.com/adityaSharma6356/music-streaming-app/assets/115709232/cea25844-1f98-4dc9-afd9-a499943efdd2)
-![image](https://github.com/adityaSharma6356/music-streaming-app/assets/115709232/ce0e3a9f-5d23-4cc7-8770-7c307d891672)
+
+
+### Dark/Light Mode and Notification
+| ![item](previews/pldark.jpg) | ![item](previews/pllight.jpg) | ![item](previews/song1.jpg) | ![item](previews/song2.jpg) | ![item](previews/pdark.jpg) | ![item](previews/noti.jpg) | ![item](previews/addfeature.jpg) |
+|------------------------------|:-----------------------------:|:---------------------------:|:---------------------------:|:---------------------------:|:--------------------------:|:--------------------------------:|
+
+## Features
+- Jetpack Compose UI. Custom animations, transitions, light/dark theme and layouts.
+- custom Jetpack compose Navigations
+- MVI Clean Architecture
+- Dependency injection with Hilt
+- Firebase database for songs metadata
+- In-App Song sharing via online links that open directly to application
+- 320kbps Highest audio quality songs on server
+- Media style Notification
+- Easy swipe animations for browsing through songs
+- Playlists creation features
 
 
