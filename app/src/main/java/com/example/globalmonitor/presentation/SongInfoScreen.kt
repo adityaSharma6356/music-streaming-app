@@ -65,6 +65,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier) {
     val color by animateColorAsState(targetValue = Color(mainViewModel.dominantColors[1].toArgb()), animationSpec = TweenSpec(500))
     val colorD = Color.Black
     val lazycorscope = rememberCoroutineScope()
+    val context = LocalContext.current
     BackHandler(mainViewModel.expandedSongScreen) {
         mainViewModel.expandedSongScreen = false
         mainViewModel.changeHeight(configuration)
@@ -87,7 +88,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier) {
                     .zIndex(10f)
                     .background(Color.White)
             ) {
-                val (fullScreenShadow, replayButton, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal) = createRefs()
+                val (shareIcon ,fullScreenShadow, replayButton, songTitle, songArtist, seekBar, playPauseButton, nextButton, previousButton, backIcon, timeLapsed, timeTotal) = createRefs()
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -202,6 +203,22 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier) {
                         .clickable {
                             mainViewModel.expandedSongScreen = false
                             mainViewModel.changeHeight(configuration)
+                        }
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.share_icon),
+                    contentDescription = "next",
+                    tint = color,
+                    modifier = Modifier
+                        .constrainAs(shareIcon) {
+                            top.linkTo(parent.top, margin = 40.dp)
+                            end.linkTo(parent.end, margin = 15.dp)
+                        }
+                        .size(45.dp)
+                        .zIndex(10f)
+                        .padding(0.dp, 0.dp, 15.dp, 0.dp)
+                        .clickable {
+                            mainViewModel.shareLink(context, "http://snowflake-streamer.000webhostapp.com/${mainViewModel.currentSongIndex+1}")
                         }
                 )
                 Icon(

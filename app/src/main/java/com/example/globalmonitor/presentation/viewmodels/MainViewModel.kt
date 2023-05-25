@@ -72,9 +72,6 @@ class MainViewModel @Inject constructor(
     private val curPlayingSong = musicServiceConnection.curPlayingSong
     private val playbackState = musicServiceConnection.playbackState
     private val lightColor = Color(119, 118, 118, 255)
-    var colorHome by mutableStateOf(Color.White)
-    var colorPlay by mutableStateOf(lightColor)
-    var colorProf by mutableStateOf(lightColor)
     var lazystate by mutableStateOf(LazyListState())
     var isSongEnding = false
     var isReplayEnabled = false
@@ -84,7 +81,8 @@ class MainViewModel @Inject constructor(
     var tempPlaylist = mutableStateListOf<PlayListItem>()
     var openScreenNow by mutableStateOf(false)
     var deepLinkMedia: Int? = null
-    var navColorsList = mutableStateListOf<Color>(Color.White, lightColor, lightColor, lightColor)
+    var navColorsList = mutableStateListOf(Color.White, lightColor, lightColor, lightColor)
+    var SearchList = mutableStateListOf<SongModel>()
 
     private var scope : Job? = null
     private var scope2 : Job? = null

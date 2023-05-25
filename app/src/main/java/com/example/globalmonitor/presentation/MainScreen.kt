@@ -35,7 +35,7 @@ fun TabsScreen(mainViewModel: MainViewModel, state: LazyListState) {
                 ProfileScreen(title = "Profile")
             }
             item{
-                ProfileScreen(title = "Search")
+                SearchScreen(title = "Search", mainViewModel)
             }
     }
 }

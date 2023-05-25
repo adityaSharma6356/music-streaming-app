@@ -10,5 +10,7 @@ data class SongModel (
     val title: String = "",
     val duration: Long = 0L,
     val dateAdded : String  = "",
-    val local : Boolean = false
+    val local : Boolean = false,
+    val lightColor : Color = Color(255, 255, 255, 255),
+    val darkColor : Color = Color(0, 0, 0, 255),
 )
