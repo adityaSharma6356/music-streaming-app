@@ -83,24 +83,7 @@ fun BottomNav(viewModel:MainViewModel, lazystate:LazyListState) {
         Icon(modifier = Modifier
             .height(40.dp)
             .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.profile_icon), contentDescription = "profile", tint = viewModel.navColorsList[2])
-        Text(text = "Profile", fontSize = 8.sp, color = viewModel.navColorsList[2], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
-    }
-    Column(modifier = Modifier
-        .clickable(
-            interactionSource = interactionSource,
-            indication = null
-        ) {
-            csc.launch {
-                viewModel.iconClick(3, prevPage)
-                prevPage = 3
-                lazystate.animateScrollToItem(3)
-            }
-        }) {
-        Icon(modifier = Modifier
-            .height(40.dp)
-            .width(70.dp)
-            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.search_icon), contentDescription = "search", tint = viewModel.navColorsList[3])
-        Text(text = "Search", fontSize = 8.sp, color = viewModel.navColorsList[3], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
+            .padding(0.dp, 5.dp), painter = painterResource(id = R.drawable.search_icon), contentDescription = "search", tint = viewModel.navColorsList[2])
+        Text(text = "Search", fontSize = 8.sp, color = viewModel.navColorsList[2], textAlign = TextAlign.Center, modifier = Modifier.width(70.dp))
     }
 }

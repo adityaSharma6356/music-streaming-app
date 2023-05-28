@@ -32,9 +32,6 @@ fun TabsScreen(mainViewModel: MainViewModel, state: LazyListState) {
                 PlaylistsScreen(mainViewModel, "Playlists")
             }
             item{
-                ProfileScreen(title = "Profile")
-            }
-            item{
                 SearchScreen(title = "Search", mainViewModel)
             }
     }
@@ -58,27 +55,6 @@ fun HomeScreen(viewModel: MainViewModel, songlist: List<SongModel>, title: Strin
                 Text(text = title, fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(15.dp, 0.dp))
             }
             SongList(viewModel = viewModel, songlist = songlist)
-        }
-    }
-}
-
-@Composable
-fun ProfileScreen(title: String){
-    val config = LocalConfiguration.current
-    Surface(color = Color.Transparent,modifier = Modifier
-        .padding(0.dp, 50.dp)
-        .zIndex(0f)
-        .width(config.screenWidthDp.dp)
-    ) {
-        Column {
-            Box(contentAlignment = Alignment.CenterStart,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .background(Color.Black)
-            ) {
-                Text(text = title, fontSize = 20.sp, color = Color.White, modifier = Modifier.padding(15.dp, 0.dp))
-            }
         }
     }
 }

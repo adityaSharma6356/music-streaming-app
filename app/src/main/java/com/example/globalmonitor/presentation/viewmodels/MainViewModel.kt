@@ -81,7 +81,7 @@ class MainViewModel @Inject constructor(
     var tempPlaylist = mutableStateListOf<PlayListItem>()
     var openScreenNow by mutableStateOf(false)
     var deepLinkMedia: Int? = null
-    var navColorsList = mutableStateListOf(Color.White, lightColor, lightColor, lightColor)
+    var navColorsList = mutableStateListOf(Color.White, lightColor, lightColor)
     var SearchList = mutableStateListOf<SongModel>()
 
     private var scope : Job? = null
