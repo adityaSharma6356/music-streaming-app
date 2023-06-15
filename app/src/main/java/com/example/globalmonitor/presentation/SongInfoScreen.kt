@@ -218,7 +218,7 @@ fun SongInfoScreen(mainViewModel: MainViewModel, modifier: Modifier) {
                         .zIndex(10f)
                         .padding(0.dp, 0.dp, 15.dp, 0.dp)
                         .clickable {
-                            mainViewModel.shareLink(context, "http://snowflake-streamer.000webhostapp.com/${mainViewModel.currentSongIndex+1}")
+                            mainViewModel.shareLink(context, "http://snowflake-streamer.000webhostapp.com/${mainViewModel.currentSongIndex}")
                         }
                 )
                 Icon(
