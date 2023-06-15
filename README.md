@@ -3,9 +3,9 @@ A music streaming application written in kotlin and jetpack compose offering dyn
 
 
 ### Dark/Light Mode and Notification
-| ![item](previews/pldark.jpg)       |    ![item](previews/pllight.jpg)    |     ![item](previews/song1.jpg)     |      ![item](previews/song2.jpg)      |
-|------------------------------------|:-----------------------------------:|:-----------------------------------:|:-------------------------------------:|
-| ![item](previews/noti.jpg)         |  ![item](previews/addfeature.jpg)   |     ![item](previews/pdark.jpg)     | [!item](previews/Test_recording.webm) |
+| ![item](previews/pldark.jpg)       |    ![item](previews/pllight.jpg)    |     ![item](previews/song1.jpg)     |    ![item](previews/song2.jpg)    |
+|------------------------------------|:-----------------------------------:|:-----------------------------------:|:---------------------------------:|
+| ![item](previews/noti.jpg)         |  ![item](previews/addfeature.jpg)   |     ![item](previews/pdark.jpg)     |  [!item](previews/recording.mp4)  |
 
 ## Features
 - Jetpack Compose UI. Custom animations, transitions, light/dark theme and layouts.
